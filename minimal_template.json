@@ -1,0 +1,7 @@
+{
+  "Resources":{
+    "JonsBucketforfirstCloudFormationTemplate":{
+      "Type":"AWS::S3::Bucket"
+    }
+  }
+}
