@@ -1,0 +1,43 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Template to create an EC2 Instance and Install Apache Server.",
+  "Parameters" : {
+
+    "KeyName" : {
+      "Type" : "String",
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server"
+    }
+  },
+
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "InstanceType":"t2.micro",
+        "ImageId":"ami-0ff8a91507f77f867",
+
+        "UserData": {
+            "Fn::Base64": {
+                "Fn::Join": [
+                  "",
+                    [
+                      "#!/bin/bash\n",
+                      "sudo su - \n",
+                      "sudo yum update -y \n",
+                      "sudo yum install httpd24 -y\n",
+                      "sudo service httpd start\n",
+                      "sudo chkconfig httpd on",
+                    ]
+                ]
+            }
+        },
+
+        "KeyName": {
+          "Ref": "KeyName"
+        }
+
+      }
+    }
+  },
+
+}
