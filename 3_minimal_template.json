@@ -16,7 +16,8 @@
         "ImageId":"ami-0ff8a91507f77f867",
         "KeyName": {
           "Ref": "KeyName"
-        }
+        },
+        
       }
     }
   },
@@ -25,7 +26,12 @@
       "PublicIp" : {
         "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PublicIp" ]},
         "Description" : "Server's PublicIp Address"
+      },
+      "InstanceID" : {
+        "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "InstanceID" ]},
+        "Description" : "Server's InstanceID."
       }
+
   }
 
 }
