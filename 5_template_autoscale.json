@@ -1,0 +1,118 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Template to create an EC2 Instance and Install Apache Server.",
+  "Parameters" : {
+
+    "KeyName" : {
+      "Type" : "String",
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server"
+    }
+
+  },
+
+  "Resources" : {
+
+    "myEC2SecurityGroup1": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId" : "vpc-1d7cae67",
+        "GroupDescription": "Sample source security group"
+      }
+    },
+
+    "myEC2SecurityGroup2": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId" : "vpc-1d7cae67",
+        "GroupDescription": "Sample source security group"
+      }
+    },
+
+    "OutboundRule": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties":{
+        "IpProtocol": "tcp",
+        "FromPort": 0,
+        "ToPort": 65535,
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "myEC2SecurityGroup2",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "myEC2SecurityGroup1",
+            "GroupId"
+          ]
+        }
+      }
+    },
+
+    "InboundRule": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties":{
+        "IpProtocol": "tcp",
+        "FromPort": 0,
+        "ToPort": 65535,
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "myEC2SecurityGroup1",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "myEC2SecurityGroup2",
+            "GroupId"
+          ]
+        }
+      }
+    },
+
+    "SimpleConfig" : {
+       "Type" : "AWS::AutoScaling::LaunchConfiguration",
+       "Properties" : {
+         "KeyName": {
+           "Ref": "KeyName"
+         },
+         "ImageId":"ami-0ff8a91507f77f867",
+          "InstanceType":"t2.micro",
+          "UserData": {
+              "Fn::Base64": {
+                  "Fn::Join": [
+                    "",
+                      [
+                        "#!/bin/bash\n",
+                        "yum update -y \n",
+                        "yum install httpd24 -y\n",
+                        "service httpd start\n",
+                        "chkconfig httpd on",
+                      ]
+                  ]
+              }
+          },
+          "BlockDeviceMappings" : [
+            {
+                "DeviceName" : "/dev/xvda",
+                "Ebs" : {
+                  "VolumeSize" : "8"
+                }
+             },
+             {
+                "DeviceName" : "/dev/sdf",
+                "VirtualName" : "ephemeral0"
+             }
+          ]
+       }
+    }
+
+
+
+
+  },
+
+
+
+
+}
