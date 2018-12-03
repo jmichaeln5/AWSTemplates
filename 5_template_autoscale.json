@@ -8,12 +8,6 @@
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server"
     },
 
-    "InstanceName": {
-      "Description": "Name of EC2 instance",
-      "Type": "String",
-      "ConstraintDescription": "must be a valid EC2 instance string name."
-    },
-
       "InstanceCount": {
         "Description": "Basic EC2 instance count",
         "Type": "String",
@@ -28,7 +22,6 @@
 
 
   "Resources" : {
-
 
         "Ec2Instance" : {
           "Type" : "AWS::EC2::Instance",
@@ -55,64 +48,14 @@
           }
         },
 
-    "FirstEC2SecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "VpcId" : "vpc-1d7cae67",
-        "GroupDescription": "First sample security group"
-      }
-    },
-
-    "SecondEC2SecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "VpcId" : "vpc-1d7cae67",
-        "GroupDescription": "Second sample security group"
-      }
-    },
-
-    "OutboundRule": {
-      "Type": "AWS::EC2::SecurityGroupEgress",
-      "Properties":{
-        "IpProtocol": "TCP",
-        "FromPort": 0,
-        "ToPort": 65535,
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "SecondEC2SecurityGroup",
-            "GroupId"
-          ]
+        "WebSecurityGroup": {
+          "Type": "AWS::EC2::SecurityGroup",
+          "Properties": {
+            "VpcId" : "vpc-1d7cae67",
+            "GroupDescription": "Web Security Group",
+            "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : 80, "ToPort" : 80, "CidrIp" : "0.0.0.0/0" } ],
+          }
         },
-        "GroupId": {
-          "Fn::GetAtt": [
-            "FirstEC2SecurityGroup",
-            "GroupId"
-          ]
-        }
-      }
-    },
-
-    "InboundRule": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties":{
-        "IpProtocol": "TCP",
-        "FromPort": 0,
-        "ToPort": 65535,
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "FirstEC2SecurityGroup",
-            "GroupId"
-          ]
-        },
-
-        "GroupId": {
-          "Fn::GetAtt": [
-            "SecondEC2SecurityGroup",
-            "GroupId"
-          ]
-        }
-      }
-    },
 
     "SimpleConfig" : {
        "Type" : "AWS::AutoScaling::LaunchConfiguration",
@@ -122,7 +65,6 @@
          },
          "ImageId":"ami-0ff8a91507f77f867",
           "InstanceType":"t2.micro",
-
 
           "BlockDeviceMappings" : [
             {
@@ -138,8 +80,6 @@
           ]
        }
     }
-
-
 
 
   },
