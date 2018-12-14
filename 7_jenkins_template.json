@@ -2,16 +2,12 @@
   "AWSTemplateFormatVersion" : "2010-09-09",
   "Description" : "Template to create an EC2 Instance and Install Jenkins Server. Navigate to port :8080 on instance to access Jenkins page.",
   "Parameters" : {
-
     "KeyName" : {
       "Type" : "String",
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server"
     }
-
   },
-
   "Resources" : {
-
     "Ec2Instance" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
@@ -43,8 +39,5 @@
         },
       }
     }
-
-
   },
-
 }
